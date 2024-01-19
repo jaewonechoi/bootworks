@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>글목록</title>
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+	<div id="container">
+		<h2>글목록</h2>
+			<table class="tbl_list">
+				<thead>
+					<tr>
+						<th>번호</th>
+						<th>제목</th>
+						<th>글쓴이</th>
+						<th>작성일</th>
+						<th>조회수</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="board: ${boardList}">
+						<td th:text="${board.id}"></td>
+						<!-- Page 클래스의 메서드인 number - getNumber() -->
+						<td><a th:href="@{|/board/${board.id}|(page=${boardList.number+1})}" 
+								th:text="${board.boardTitle}"></a></td>
+						<td th:text="${board.boardWriter}"></td>
+						<td>
+							<span th:if="${board.updatedDate != null}" 
+								th:text="${#temporals.format(board.updatedDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+							<span th:unless="${board.updatedDate != null}" 
+								th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+						</td>
+						<td th:text="${board.boardHits}"></td>
+					</tr>
+				</tbody>
+			</table>
+		<!-- 페이지 영역 -->
+		<div class="pagination">
+			<!-- 이젠 페이지 -->
+			<a th:href="${boardList.first}?'#' : @{/board/pagelist(page=${boardList.number})}">Prev</a>
+			<!-- 페이지 번호 블럭 -->
+				<span th:each="page: ${#numbers.sequence(startPage, endPage)}">
+					<!-- 현재 페이지는 링크없이 숫자만 표시 -->
+					<span th:if="${page == boardList.number + 1}" th:text="${page}" class="current_page"></span>
+					<span th:if="${page != boardList.number + 1}">
+						<a th:href="@{/board/pagelist(page=${page})}" th:text="${page}"></a>
+					</span>
+				</span>
+			<!-- 다음 페이지 -->
+			<!-- 2page -> 3page 실제페이지는 1page -->
+			<a th:href="${boardList.last}? '#' : @{/board/pagelist(page=${boardList.number+2})}">Next</a>
+		</div>
+		<!-- 글쓰기 버튼 -->
+		<div class="btn_write">
+			<a th:href="@{/board/write}"><button type="button">글쓰기</button></a>
+		</div>
+	</div>
+</body>
+</html>

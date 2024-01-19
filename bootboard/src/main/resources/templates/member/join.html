@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>회원가입</title>
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+</head>
+<body>
+	<div id="container">
+		<h2>회원가입</h2>
+		<form th:action="@{/member/join}" method="post" class="joinform">
+			<fieldset>
+				<ul>
+					<li>
+						<label for="memberEmail">이메일</label>
+						<input type="text" name="memberEmail" id="memberEmail" onblur="checkEmail()">
+					</li>
+					<li>
+						<p id="check-result"></p>
+					</li>
+					<li>
+						<label for="memberPassword">비밀번호</label>
+						<input type="password" name="memberPassword" id="memberPassword">
+					</li>
+					<li>
+						<label for="memberName">이름</label>
+						<input type="text" name="memberName" id="memberName">
+					</li>
+					<li>
+						<label for="memberAge">나이</label>
+						<input type="text" name="memberAge" id="memberAge">
+					</li>
+					<li>
+						<input type="submit" value="가입">
+						<input type="reset" value="취소">
+					</li>
+				</ul>
+			</fieldset>
+		</form>
+	</div>
+<script>
+	const checkEmail = () => {
+		//alert("test");
+		let inputEmail = document.getElementById("memberEmail").value;
+		let checkResult = document.getElementById("check-result");
+		console.log("입력된 이메일: ", inputEmail);
+		
+		$.ajax({
+			type: "POST",
+			url:	"/member/check-email",
+			data: {	memberEmail: inputEmail	},
+			success: function(res){
+				console.log("성공: ", res);
+				if(res == "OK"){
+					checkResult.innerHTML = "사용가능한 이메일입니다.";
+					checkResult.style.color = "green";
+				}else{	//res == "NO"
+					checkResult.innerHTML = "이미 가입된 이메일입니다.";
+					checkResult.style.color = "#b00";
+				}
+			},
+			error: function(err){
+				console.log("실패: ", err);
+			}
+			
+		});
+	};
+</script>
+</body>
+</html>
